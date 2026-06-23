@@ -1,0 +1,8 @@
+ROUTINE Exercicio7
+
+Exercicio7
+
+    Read "Digite seu nome completo: ", nome,!
+
+    Write "Quantidade de caracteres sem contar espaços: ", $l($tr(nome," ")),!
+    Write "Nome completo com | no lugar dos espaços: ",$tr(nome," ","|"),!

@@ -1,0 +1,12 @@
+ROUTINE Exercicio6
+
+Exercicio6
+
+    Read "Digite uma data: ", data,!
+
+    set datahorolog = $zdh(data,4)
+    set dataislam = $zd(datahorolog,18)
+
+    Write "Data formato horolog: ", datahorolog,!
+    Write "Data em formato islamico: ", dataislam,!
+    Write "Nome do mês islamico: ", $p(dataislam," ",2),!

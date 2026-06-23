@@ -1,0 +1,15 @@
+ROUTINE Exercicio4
+
+Exercicio4
+
+    Read "Digite a matricula do aluno: ", matricula,!
+    Read "Digite o nome do aluno: ", nome,!
+    Read "Digite o telefone do aluno: ", telefone,!
+    Read "Digite a Data de Nascimento do aluno: ", dtNascim,!
+    Read "Digite o sexo do aluno: ", sexo,!!
+
+    Write "Matricula do aluno: ", matricula,!
+    Write "Nome do aluno: ", nome,!
+    Write "Telefone do aluno: ", telefone,!
+    Write "Data de Nascimento do aluno: ", dtNascim,!
+    Write "Sexo do aluno: ", sexo,!
