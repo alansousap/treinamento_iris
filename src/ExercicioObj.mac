@@ -2,14 +2,26 @@ ROUTINE ExercicioObj
 
 ExercicioObj
     kill ^Treinamento.Data.CursoD
+    kill ^Treinamento.Data.InstrutorD
+    kill ^Treinamento.Data.AlunoD
+    kill ^Treinamento.Data.TurmaD
 
+    do curso
+    do instrutor
+    do aluno
+    do turma
+    do status
+
+    do ##Class(Treinamento.Data.Turma).ImprimirTurma("Obj Script")
+
+    quit
+
+curso
     set curso = ##class(Treinamento.Data.Curso).%New()
     set curso.Nome="Obj Script"
     set curso.Duracao=40
     set curso.Preco=1.500
-    
     set status=curso.%Save()
-
     quit
 
 instrutor
@@ -20,11 +32,47 @@ instrutor
     quit
 
 aluno
-    for i=1:1:3 {
+    /*for i=1:1:3 {
         set aluno = ##class(Treinamento.Data.Aluno).%New()
         set aluno.Nome="Teste "_i
         set aluno.Idade=10*i
         set aluno.Matricula="A"_i
         set status=aluno.%Save()
-    }
+    }*/
+    set aluno1 = ##class(Treinamento.Data.Aluno).%New()
+    set aluno1.Nome="Aluno 1"
+    set aluno1.Idade=10*1
+    set aluno1.Matricula="A1"
+    set status=aluno1.%Save()
+
+    set aluno2 = ##class(Treinamento.Data.Aluno).%New()
+    set aluno2.Nome="Aluno 2"
+    set aluno2.Idade=10*2
+    set aluno2.Matricula="A2"
+    set status=aluno2.%Save()
+
+    set aluno3 = ##class(Treinamento.Data.Aluno).%New()
+    set aluno3.Nome="Aluno 3"
+    set aluno3.Idade=10*3
+    set aluno3.Matricula="A3"
+    set status=aluno3.%Save()
+    quit
+
+turma
+    set turma = ##class(Treinamento.Data.Turma).%New()
+    set turma.DataInicio = ""
+    set turma.Status = "Incompleto"
+    set turma.Curso = curso
+    set turma.Instrutor = instrutor
+    Do turma.Alunos.Insert(aluno1)
+    Do turma.Alunos.Insert(aluno2)
+    Do turma.Alunos.Insert(aluno3)
+    set status=turma.%Save()
+    Write "Turma Cadastrada com Sucesso",!
+    quit
+
+status
+    //set turma = ##class(Treinamento.Data.Turma).%New()
+    set statusRetornado = turma.VerificarStatus("Obj Script")
+    write !,statusRetornado
     quit

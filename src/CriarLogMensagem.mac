@@ -1,0 +1,15 @@
+ROUTINE CriarLogMensagem
+
+CriarLogMensagem
+    set pDataInicio = ##Class(%UTC).NowLocal()
+    set pStatus = 1
+    set pClasse = "LogMensagem"
+    set pMetodo = "LogMetodo"
+    set pStatusProcesso="Processo realizado com sucesso!"
+    set pStatusCode = "1"
+    set pPageSize = 10
+    set DataFim = $zd($h,4)
+    set pLastId = ""
+
+    set logMensagemCriarInicio = ##Class(Treinamento.Data.LogMensagem).CriarEntrada(pMetodo, pClasse)
+    set idLog = logMensagemCriarInicio.%Id()
