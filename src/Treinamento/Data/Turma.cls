@@ -9,15 +9,34 @@ Class Treinamento.Data.Turma Extends (%Persistent, %XML.Adaptor)
 /// Description
 Method VerificarStatus(curso As %String) As %String
 {
-    Set status = $$$OK
-    set statusTurma = ""
-    set sql = "SELECT * FROM Treinamento_Data.Turma WHERE Curso-> Nome = '"_curso_"'"
-    set resultSet = ##Class(%ResultSet).%New()
-    set status = resultSet.Prepare(sql)
-    set status = resultSet.Execute()
+    Set status = $$$OK   
+    Set Classe = $ZNAME
+    Set core = ##class(Treinamento.Data.LogMensagem).%New()
 
-    while resultSet.%Next() {
-        set statusTurma = resultSet.%Get("Status")
+    try {
+        set statusTurma = ""
+        set statusProcesso = "Metodo VerificarStatus Foi executado com sucesso!"
+        Set pStatus = 1
+        Set init = core.CriarEntrada("VerificarStatus",Classe)
+        Set IdLog = init.%Id()
+
+        set sql = "SELECT * FROM Treinamento_Data.Turma WHERE Curso-> Nome = '"_curso_"'"
+        set resultSet = ##Class(%ResultSet).%New()
+        set status = resultSet.Prepare(sql)
+        set status = resultSet.Execute()
+
+        while resultSet.%Next() {
+            set statusTurma = resultSet.%Get("Status")
+        }
+         Set fim = core.Finalizar(IdLog,statusProcesso,pStatus)
+    } Catch ex {
+        Set status= ex.AsStatus()
+        Set statusErroEspc = status
+        Set erroMsg = $SYSTEM.Status.GetOneErrorText(status)
+        Set pStatus = 0
+        Set erro = "IdLog :"_IdLog_" - ErroLog :"_erroMsg_" Detalhes : "_statusErroEspc
+        Set fim = core.Finalizar(IdLog,erro,pStatus)  
+        Throw ex
     }
 
     Return statusTurma
@@ -26,7 +45,15 @@ Method VerificarStatus(curso As %String) As %String
 ClassMethod ImprimirTurma(curso As %String) As %Status
 {
     set status = $$$OK
+    Set Classe = $ZNAME
+    Set core = ##class(Treinamento.Data.LogMensagem).%New()   
+
     Try {
+        set statusProcesso = "Metodo ImprimirTurma Foi executado com sucesso!"
+        set pStatus = 1
+        set init = core.CriarEntrada("ImprimirTurma",Classe)
+        set IdLog = init.%Id()
+
         set sql = "SELECT * FROM Treinamento_Data.Turma WHERE Curso-> Nome = '"_curso_"'"
         set resultSet = ##Class(%ResultSet).%New()
         
@@ -45,9 +72,15 @@ ClassMethod ImprimirTurma(curso As %String) As %Status
             Write !,"Nome: "_aluno.Nome, " Matricula: ", aluno.Matricula, " Idade: ", aluno.Idade
         }
     } Catch (exception) {
-        set status = exception.AsStatus()
-        Throw exception
+        Set status = exception.AsStatus()
+        Set statusErroEspc = status
+        Set erroMsg = $SYSTEM.Status.GetOneErrorText(status)
+        Set pStatus = 0
+        set erro = "IdLog :"_IdLog_" - ErroLog :"_erroMsg_" Detalhes : "_statusErroEspc
+        Set fim = core.Finalizar(IdLog,erro,pStatus)
+        Throw exception 
     }
+    Set fim = core.Finalizar(IdLog,statusProcesso,pStatus)
     return
 }
 
