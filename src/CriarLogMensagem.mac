@@ -10,6 +10,7 @@ CriarLogMensagem
     set pPageSize = 10
     set pDataFim = "" //$zd($h,4)
     set pLastId = 1
+    set IdLog = 4
 
     set LogMensagemCriar = ##Class(Treinamento.Data.LogMensagem).CriarEntrada(pMetodo, pClasse)
     set IdLog = LogMensagemCriar.%Id()
@@ -35,3 +36,13 @@ CriarLogMensagem
        
         Write ! 
     }
+
+    Set jsonPaginado = ##class(Treinamento.Data.LogMensagem).ConsultaLogPaginacaoJSON(pStatus, 1, pPageSize, pDataFim)
+    Write "=== [JSON] CONSULTA PAGINADA ===",!
+    Write jsonPaginado.%ToJSON(),!!
+
+    set jsonLogUnico = ##Class(Treinamento.Data.LogMensagem).BuscarLogPorIdJSON(IdLog)
+    Write !,"=== [JSON] Log Único Criado ==="
+    Write !,jsonLogUnico.%ToJSON(),!!
+
+    

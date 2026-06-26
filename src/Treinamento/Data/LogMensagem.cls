@@ -140,6 +140,80 @@ Class Treinamento.Data.LogMensagem Extends (%Persistent, %XML.Adaptor)
         Return entry
     }
 
+    ClassMethod BuscarLogPorIdJSON(pId As %Integer) As %DynamicObject
+    {
+        set jsonResponse = ##Class(%DynamicObject).%New()
+        try {
+            #Dim log As Treinamento.Data.LogMensagem = ##Class(Treinamento.Data.LogMensagem).%OpenId(pId)
+
+            if $ISOBJECT(log) {
+                set jsonResponse.ID = pId
+                set jsonResponse.Metodo = log.Metodo
+                set jsonResponse.Classe = log.Classe
+                set jsonResponse.Inicio = log.Inicio
+                set jsonResponse.Fim = log.Fim
+                set jsonResponse.Status = log.Status
+                set jsonResponse.StatusProcesso = log.StatusProcesso
+            }
+        } catch (exception) {
+            set jsonResponse.Erro = "Erro interno ao processar a busca: "_exception.AsSystemError()
+        }
+
+        return jsonResponse
+    }
+
+    ClassMethod ConsultaLogPaginacaoJSON(pStatus As %Boolean, pLastId As %Integer, pPageSize As %Integer, pDataFim As %String) As %DynamicObject
+    {
+        set jsonResultado = ##Class(%DynamicObject).%New()
+        set jsonArray = ##Class(%DynamicArray).%New()
+
+        Try {   
+            Set tSC = $$$OK
+            Set ultimoIdProcessado = pLastId
+
+            Set SQL = "SELECT TOP "_pPageSize_" ID, Metodo, Classe, Inicio, Fim, Status, StatusProcesso  FROM Treinamento_Data.LogMensagem "
+            Set SQL = SQL_"WHERE Status = "_pStatus
+            
+            If (pLastId > 0) {
+                Set SQL = SQL_" AND ID > "_pLastId
+            }
+            
+            If (pDataFim '= "") {
+                Set SQL = SQL_" AND Fim <= '"_pDataFim_"'"
+            }
+            
+            Set SQL = SQL_" ORDER BY ID ASC"
+            
+            Set resultSet = ##class(%ResultSet).%New()
+            Do resultSet.Prepare(SQL)
+            Set tSC = resultSet.Execute()
+            
+            While (resultSet.Next()) {
+                Set jsonItem = ##class(%DynamicObject).%New()
+            
+                Set ultimoIdProcessado = resultSet.%Get("ID")
+                
+                Set jsonItem.ID             = ultimoIdProcessado
+                Set jsonItem.Metodo         = resultSet.%Get("Metodo")     
+                Set jsonItem.Classe         = resultSet.%Get("Classe")
+                Set jsonItem.Inicio         = resultSet.%Get("Inicio")     
+                Set jsonItem.Fim            = resultSet.%Get("Fim")
+                Set jsonItem.Status         = resultSet.%Get("Status")     
+                Set jsonItem.StatusProcesso = resultSet.%Get("StatusProcesso")
+                Do jsonArray.%Push(jsonItem)
+            }
+            
+            Set jsonResultado.TotalPagina = jsonArray.%Size()
+            Set jsonResultado.ProximoLastId = ultimoIdProcessado
+            Set jsonResultado.Logs = jsonArray
+        }
+        Catch (exception) {
+            Set jsonResultado.Erro = "Falha na paginação: " _ exception.AsSystemError()
+        }
+        
+        Return jsonResultado
+    }
+
 
 Storage Default
 {
